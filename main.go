@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -26,33 +24,23 @@ func AddURL(c *gin.Context) {
 	var data Data
 	c.BindJSON(&data)
 	var return_data URLid
-	if Tools.CheckLinkValid(data.URL) && (data.EXPIREAT != "") {
+	timestampcheck, timestamp := Tools.ConvertTimetoUnix(data.EXPIREAT)
+	if Tools.CheckLinkValid(data.URL) && (timestampcheck) {
 		ShortID := Tools.RandomString(5)
-		Database.AddData(ShortID, data.URL, data.EXPIREAT)
-		return_data = URLid{ID: ShortID, ShortURL: "http://localhost:19247/api/v1/urls/" + ShortID}
+		Database.AddData(ShortID, data.URL, timestamp)
+		return_data = URLid{ID: ShortID, ShortURL: "http://localhost:19247/" + ShortID}
 		c.JSON(200, return_data)
-		fmt.Println(time.Now().UTC().Format(data.EXPIREAT))
 	} else {
 		return_data = URLid{ID: "", ShortURL: ""}
 		c.JSON(400, return_data)
 	}
 }
 
-func QueryDB(ID string) string {
-	// Search Link in DB
-	Check, URL := Database.QueryData(ID)
-	if Check {
-		return URL
-	} else {
-		return ""
-	}
-}
-
 func RedirectURL(c *gin.Context) {
 	ID := c.Param("ShortID")
 	// Search Link in DB
-	Link := QueryDB(ID)
-	if Link != "" {
+	Check, Link := Database.QueryData(ID)
+	if Check {
 		c.Redirect(301, Link)
 	} else {
 		c.Status(404)

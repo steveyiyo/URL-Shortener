@@ -2,7 +2,6 @@ package Database
 
 import (
 	"database/sql"
-	"fmt"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -11,7 +10,7 @@ func CreateTable() {
 	// Create Table
 	db, err := sql.Open("sqlite3", "./data.db")
 	ErrCheck(err)
-	// stmt, err := db.Prepare("CREATE TABLE IF NOT EXISTS urlinfo (`ShortID` string NOT NULL, `Link` string not NULL, `Expireat` string not NULL)")
+	// stmt, err := db.Prepare("CREATE TABLE IF NOT EXISTS urlinfo (`ShortID` string NOT NULL, `Link` string not NULL, `Expireat` int64 not NULL)")
 	stmt, err := db.Prepare("CREATE TABLE IF NOT EXISTS urlinfo (ShortID string, Link string, Expireat string);")
 	ErrCheck(err)
 	stmt.Exec()
@@ -20,7 +19,7 @@ func CreateTable() {
 	db.Close()
 }
 
-func AddData(ShortID, Link, ExpireAt string) {
+func AddData(ShortID string, Link string, ExpireAt int64) {
 	CreateTable()
 	db, err := sql.Open("sqlite3", "./data.db")
 	ErrCheck(err)
@@ -28,9 +27,7 @@ func AddData(ShortID, Link, ExpireAt string) {
 	ErrCheck(err)
 	res, err := stmt.Exec(ShortID, Link, ExpireAt)
 	ErrCheck(err)
-	id, err := res.LastInsertId()
-	ErrCheck(err)
-	fmt.Println(id)
+	res.LastInsertId()
 	db.Close()
 }
 

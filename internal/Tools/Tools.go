@@ -1,6 +1,7 @@
 package Tools
 
 import (
+	"fmt"
 	"math/rand"
 	"strings"
 	"time"
@@ -26,4 +27,15 @@ func CheckLinkValid(Link string) bool {
 	} else {
 		return false
 	}
+}
+
+func ConvertTimetoUnix(date string) (bool, int64) {
+	layout := "2006-01-02T15:04:05Z"
+	t, err := time.Parse(layout, date)
+	var status = true
+	if err != nil {
+		fmt.Println(err)
+		status = false
+	}
+	return status, t.Unix()
 }
