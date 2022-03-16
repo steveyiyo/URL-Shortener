@@ -2,6 +2,7 @@ package Database
 
 import (
 	"database/sql"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -34,17 +35,24 @@ func AddData(ShortID string, Link string, ExpireAt int64) {
 func QueryData(ID string) (bool, string) {
 	db, err := sql.Open("sqlite3", "./data.db")
 	ErrCheck(err)
-	rows, err := db.Query("SELECT link FROM urlinfo WHERE ShortID = ?", ID)
+	now := time.Now().Unix()
+	rows, err := db.Query("SELECT * FROM urlinfo WHERE ShortID = ?", ID)
 	ErrCheck(err)
 	status := false
-	var URL string
+	URL := ""
 	for rows.Next() {
-		var link string
-		err = rows.Scan(&link)
+		var Link string
+		var Expireat int64
+		var ShortLink string
+		err = rows.Scan(&ShortLink, &Link, &Expireat)
 		ErrCheck(err)
-		if link != "" {
-			URL = link
-			status = true
+		if Link != "" {
+			URL = Link
+			if Expireat > now {
+				status = true
+			} else {
+				status = false
+			}
 		} else {
 			URL = ""
 			status = false

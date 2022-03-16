@@ -39,6 +39,9 @@ func RedirectURL(c *gin.Context) {
 	Check, Link := Database.QueryData(ID)
 	if Check {
 		c.Redirect(301, Link)
+
+		// Check is link expired
+
 	} else {
 		c.Status(404)
 	}
