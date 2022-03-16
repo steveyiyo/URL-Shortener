@@ -1,11 +1,8 @@
 package main
 
 import (
-	"log"
-
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	"github.com/steveyiyo/dcard-url-shortener/internal/Database"
 	"github.com/steveyiyo/dcard-url-shortener/internal/Tools"
 )
@@ -48,10 +45,6 @@ func RedirectURL(c *gin.Context) {
 }
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 
 	route := gin.New()
 	route.Use(gin.Logger(), gin.Recovery())
