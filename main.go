@@ -14,7 +14,7 @@ type Data struct {
 
 type URLid struct {
 	ID       string `json:"id"`
-	ShortURL string `json:"shortURL"`
+	ShortURL string `json:"shortUrl"`
 }
 
 func AddURL(c *gin.Context) {
@@ -39,16 +39,13 @@ func RedirectURL(c *gin.Context) {
 	Check, Link := Database.QueryData(ID)
 	if Check {
 		c.Redirect(301, Link)
-
-		// Check is link expired
-
 	} else {
 		c.Status(404)
 	}
 }
 
 func main() {
-
+	Database.CreateTable()
 	route := gin.New()
 	route.Use(gin.Logger(), gin.Recovery())
 
