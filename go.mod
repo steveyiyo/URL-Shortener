@@ -1,4 +1,4 @@
-module github.com/steveyiyo/dcard-url-shortener
+module github.com/steveyiyo/url-shortener
 
 go 1.17
 

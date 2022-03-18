@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/steveyiyo/dcard-url-shortener/internal/Database"
-	"github.com/steveyiyo/dcard-url-shortener/internal/Tools"
+	"github.com/steveyiyo/url-shortener/internal/Database"
+	"github.com/steveyiyo/url-shortener/internal/Tools"
 )
 
 type Data struct {
