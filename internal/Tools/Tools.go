@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"net"
 	"net/url"
 	"strings"
 	"time"
@@ -48,4 +49,15 @@ func ConvertTimetoUnix(date string) (bool, int64) {
 		status = false
 	}
 	return status, t.Unix()
+}
+
+// Check IP Valid
+func CheckIPAddress(ip string) bool {
+	var isCorrect bool
+	if net.ParseIP(ip) == nil {
+		isCorrect = false
+	} else {
+		isCorrect = true
+	}
+	return isCorrect
 }

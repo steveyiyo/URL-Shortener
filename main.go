@@ -7,8 +7,8 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
-	"github.com/steveyiyo/url-shortener/internal/Database"
-	"github.com/steveyiyo/url-shortener/internal/Tools"
+	Database "github.com/steveyiyo/url-shortener/internal/database"
+	Tools "github.com/steveyiyo/url-shortener/internal/tools"
 )
 
 // Predefined variable and struct
@@ -94,6 +94,9 @@ func main() {
 	Host = viper.GetString("Host")
 	Port = strconv.Itoa(viper.GetInt("Port"))
 	URL = Host + ":" + Port + "/"
+
+	// Check Config
+	// Tools.CheckIPAddress(Listen)
 
 	// Init Database
 	Database.CreateTable()

@@ -1,3 +1,3 @@
 Listen: "127.0.0.1"
-Host: "https://url.steveyi.net"
+Host: "http://localhost"
 Port: 7600
