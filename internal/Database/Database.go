@@ -7,6 +7,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// Create file and table
 func CreateTable() {
 	// Create Table
 	db, err := sql.Open("sqlite3", "./data.db")
@@ -18,6 +19,7 @@ func CreateTable() {
 	db.Close()
 }
 
+// Add data to DB
 func AddData(ShortID string, Link string, ExpireAt int64) {
 	db, err := sql.Open("sqlite3", "./data.db")
 	ErrCheck(err)
@@ -29,6 +31,7 @@ func AddData(ShortID string, Link string, ExpireAt int64) {
 	db.Close()
 }
 
+// Get data from DB
 func QueryData(ID string) (bool, string) {
 	db, err := sql.Open("sqlite3", "./data.db")
 	ErrCheck(err)
@@ -58,6 +61,7 @@ func QueryData(ID string) (bool, string) {
 	return status, URL
 }
 
+// errcheck
 func ErrCheck(err error) {
 	if err != nil {
 		panic(err)

@@ -11,6 +11,7 @@ import (
 	"github.com/steveyiyo/url-shortener/internal/Tools"
 )
 
+// Predefined variable and struct
 type Config struct {
 	Host string `yaml:"Host"`
 	Port string `yaml:"Port"`
@@ -31,25 +32,46 @@ type URLid struct {
 	ShortURL string `json:"shortUrl"`
 }
 
+// AddURL
 func AddURL(c *gin.Context) {
+
+	// Get JSON Data
 	var data Data
 	c.BindJSON(&data)
+
+	// Init return result
 	var return_data URLid
+
+	// Check Time and Convert to Unix format
 	timestampcheck, timestamp := Tools.ConvertTimetoUnix(data.EXPIREAT)
+
+	// Check Link and Time Valid
 	if Tools.CheckLinkValid(data.URL) && (timestampcheck) {
+
+		// Random Short ID
 		ShortID := Tools.RandomString(5)
+
+		// Add data to DB
 		Database.AddData(ShortID, data.URL, timestamp)
+
+		// Return result
 		return_data = URLid{ID: ShortID, ShortURL: URL + ShortID}
 		c.JSON(200, return_data)
 	} else {
+
+		// Return result
 		return_data = URLid{ID: "", ShortURL: ""}
 		c.JSON(400, return_data)
 	}
 }
 
+// RedirectURL
 func RedirectURL(c *gin.Context) {
+
+	// Get Short ID from URL
 	ID := c.Param("ShortID")
-	// Search Link in DB
+
+	// Query Link in DB
 	Check, Link := Database.QueryData(ID)
 	if Check {
 		c.Redirect(301, Link)
@@ -75,6 +97,8 @@ func main() {
 
 	// Init Database
 	Database.CreateTable()
+
+	// Init Web Server
 	route := gin.New()
 	route.Use(gin.Logger(), gin.Recovery())
 

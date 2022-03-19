@@ -7,8 +7,8 @@ Upload URL API:
 
 ```
 curl -X POST -H "Content-Type:application/json" http://localhost/api/v1/urls -d '{
-    "url": "<original_url>",                # Need a valid URL (Eg: https://google.com/)
-    "expireAt": "2021-02-08T09:20:41Z"      # RFC 3399 UTC format
+    "url": "https://steveyi.net/",         # Need a valid URL (Eg: https://google.com/)
+    "expireAt": "2021-02-08T09:20:41Z"     # RFC 3399 UTC format
 }'
 ```
 
