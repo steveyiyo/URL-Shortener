@@ -23,8 +23,8 @@ var Port string
 var URL string
 
 type Data struct {
-	URL      string `json:"url"`
-	EXPIREAT string `json:"expireAt"`
+	URL       string `json:"url"`
+	ExpiredAt string `json:"expireAt"`
 }
 
 type URLid struct {
@@ -43,10 +43,10 @@ func AddURL(c *gin.Context) {
 	var return_data URLid
 
 	// Check Time and Convert to Unix format
-	timestampcheck, timestamp := Tools.ConvertTimetoUnix(data.EXPIREAT)
+	isTimestampOk, timestamp := Tools.ConvertTimetoUnix(data.ExpiredAt)
 
 	// Check Link and Time Valid
-	if Tools.CheckLinkValid(data.URL) && (timestampcheck) {
+	if Tools.CheckLinkValid(data.URL) && (isTimestampOk) {
 
 		// Random Short ID
 		ShortID := Tools.RandomString(5)
