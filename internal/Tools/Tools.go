@@ -2,7 +2,9 @@ package Tools
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
+	"net/url"
 	"strings"
 	"time"
 )
@@ -22,11 +24,16 @@ func RandomString(length int) string {
 }
 
 func CheckLinkValid(Link string) bool {
-	if strings.HasPrefix(Link, "http://") || strings.HasPrefix(Link, "https://") {
-		return true
+	check_status := false
+	u, err := url.ParseRequestURI(Link)
+	if err != nil {
+		log.Println(err)
+		log.Println(u)
+		check_status = false
 	} else {
-		return false
+		check_status = true
 	}
+	return check_status
 }
 
 func ConvertTimetoUnix(date string) (bool, int64) {
