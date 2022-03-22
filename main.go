@@ -35,7 +35,6 @@ type URLid struct {
 
 // AddURL
 func AddURL(c *gin.Context) {
-
 	// Get JSON Data
 	var data Data
 	c.BindJSON(&data)
@@ -59,7 +58,6 @@ func AddURL(c *gin.Context) {
 		return_data = URLid{ID: ShortID, ShortURL: URL + ShortID}
 		c.JSON(200, return_data)
 	} else {
-
 		// Return result
 		return_data = URLid{ID: "", ShortURL: ""}
 		c.JSON(400, return_data)
@@ -72,12 +70,24 @@ func RedirectURL(c *gin.Context) {
 	// Get Short ID from URL
 	ID := c.Param("ShortID")
 
-	// Query Link in DB
-	Check, Link := Database.QueryData(ID)
-	if Check {
-		c.Redirect(301, Link)
+	// Query Link in Redis
+	isExist, URL := cache.QueryData(ID)
+	if !isExist {
+		// Query Link in DB
+		Check, Link := Database.QueryData(ID)
+		if Check {
+			cache.AddData(ID, Link)
+			c.Redirect(301, Link)
+		} else {
+			cache.AddData(ID, "MISS")
+			c.Status(404)
+		}
 	} else {
-		c.Status(404)
+		if URL == "MISS" {
+			c.Status(404)
+		} else {
+			c.Redirect(301, URL)
+		}
 	}
 }
 
