@@ -5,28 +5,29 @@ import (
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
+	Tools "github.com/steveyiyo/url-shortener/internal/tools"
 )
 
 // Create file and table
 func CreateTable() {
 	// Create Table
 	db, err := sql.Open("sqlite3", "./data.db")
-	ErrCheck(err)
+	Tools.ErrCheck(err)
 	stmt, err := db.Prepare("CREATE TABLE IF NOT EXISTS urlinfo (ShortID string, Link string, Expireat string);")
-	ErrCheck(err)
+	Tools.ErrCheck(err)
 	stmt.Exec()
-	ErrCheck(err)
+	Tools.ErrCheck(err)
 	db.Close()
 }
 
 // Add data to DB
 func AddData(ShortID string, Link string, ExpireAt int64) {
 	db, err := sql.Open("sqlite3", "./data.db")
-	ErrCheck(err)
+	Tools.ErrCheck(err)
 	stmt, err := db.Prepare("INSERT INTO urlinfo(ShortID, Link, Expireat) values(?,?,?)")
-	ErrCheck(err)
+	Tools.ErrCheck(err)
 	res, err := stmt.Exec(ShortID, Link, ExpireAt)
-	ErrCheck(err)
+	Tools.ErrCheck(err)
 	res.LastInsertId()
 	db.Close()
 }
@@ -34,10 +35,10 @@ func AddData(ShortID string, Link string, ExpireAt int64) {
 // Get data from DB
 func QueryData(ID string) (bool, string) {
 	db, err := sql.Open("sqlite3", "./data.db")
-	ErrCheck(err)
+	Tools.ErrCheck(err)
 	now := time.Now().Unix()
 	rows, err := db.Query("SELECT * FROM urlinfo WHERE ShortID = ?", ID)
-	ErrCheck(err)
+	Tools.ErrCheck(err)
 	status := false
 	URL := ""
 	for rows.Next() {
@@ -45,7 +46,7 @@ func QueryData(ID string) (bool, string) {
 		var Expireat int64
 		var ShortLink string
 		err = rows.Scan(&ShortLink, &Link, &Expireat)
-		ErrCheck(err)
+		Tools.ErrCheck(err)
 		if Link != "" {
 			URL = Link
 			if Expireat > now {
@@ -59,11 +60,4 @@ func QueryData(ID string) (bool, string) {
 		}
 	}
 	return status, URL
-}
-
-// errcheck
-func ErrCheck(err error) {
-	if err != nil {
-		panic(err)
-	}
 }

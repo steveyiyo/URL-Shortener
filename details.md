@@ -46,11 +46,11 @@ func CheckIPAddress(ip string) bool       // Check if IP Address valid
 
 ## Install
 
-- Download library
+- Download the libraries  
 `go mod download`
 
-- Test the server
+- Test the server  
 `go run main.go`
 
-- Build
+- Build  
 `go build -o url_shortener`

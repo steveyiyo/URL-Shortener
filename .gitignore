@@ -4,4 +4,3 @@ dist/
 .github/*
 build/*
 build_test.sh
-internal/cache/*

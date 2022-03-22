@@ -7,6 +7,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	"github.com/steveyiyo/url-shortener/internal/cache"
 	Database "github.com/steveyiyo/url-shortener/internal/database"
 	Tools "github.com/steveyiyo/url-shortener/internal/tools"
 )
@@ -97,6 +98,9 @@ func main() {
 
 	// Check Config
 	// Tools.CheckIPAddress(Listen)
+
+	// Init Redis
+	cache.InitRedis()
 
 	// Init Database
 	Database.CreateTable()

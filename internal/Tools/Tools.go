@@ -61,3 +61,15 @@ func CheckIPAddress(ip string) bool {
 	}
 	return isCorrect
 }
+
+// Check Error
+func ErrCheck(err error) bool {
+	var check_status bool
+	if err != nil {
+		log.Println(err)
+		check_status = false
+	} else {
+		check_status = true
+	}
+	return check_status
+}
