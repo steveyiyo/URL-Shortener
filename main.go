@@ -102,6 +102,7 @@ func main() {
 	Database.CreateTable()
 
 	// Init Web Server
+	gin.SetMode(gin.ReleaseMode)
 	route := gin.New()
 	route.Use(gin.Logger(), gin.Recovery())
 
