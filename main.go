@@ -76,9 +76,11 @@ func RedirectURL(c *gin.Context) {
 		// Query Link in DB
 		Check, Link := Database.QueryData(ID)
 		if Check {
+			// Add hit to Redis
 			cache.AddData(ID, Link)
 			c.Redirect(301, Link)
 		} else {
+			// Add miss link to Redis (Not Found or Expire)
 			cache.AddData(ID, "MISS")
 			c.Status(404)
 		}
