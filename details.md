@@ -13,6 +13,7 @@
   - Use Redis as cache storage.
   - If the Short ID does not exist in the DB, it will add a miss to the Redis.
   - If the Short ID exists in the DB, it will add as hit to the Redis.
+  - Limit IP Address.
 
 For the full list, please check on [go.mod](go.mod).
 
