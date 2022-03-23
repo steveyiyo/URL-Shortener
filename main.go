@@ -18,6 +18,11 @@ type Config struct {
 	Port string `yaml:"Port"`
 }
 
+type Result struct {
+	Status  bool
+	Message string
+}
+
 var Listen string
 var Host string
 var Port string
@@ -45,22 +50,36 @@ func AddURL(c *gin.Context) {
 	// Check Time and Convert to Unix format
 	isTimestampOk, timestamp := Tools.ConvertTimetoUnix(data.ExpiredAt)
 
-	// Check Link and Time Valid
-	if Tools.CheckLinkValid(data.URL) && (isTimestampOk) {
+	// Check Limit IP
+	limit_check, _ := cache.QueryData(c.ClientIP())
 
-		// Random Short ID
-		ShortID := Tools.RandomString(5)
+	// Check Limit
+	if !limit_check {
+		// Check Link and Time Valid
+		if Tools.CheckLinkValid(data.URL) && (isTimestampOk) {
 
-		// Add data to DB
-		Database.AddData(ShortID, data.URL, timestamp)
+			// Random Short ID
+			ShortID := Tools.RandomString(5)
 
-		// Return result
-		return_data = URLid{ID: ShortID, ShortURL: URL + ShortID}
-		c.JSON(200, return_data)
+			// Add data to DB
+			Database.AddData(ShortID, data.URL, timestamp)
+
+			// Add Limit IP to Redis
+			cache.AddData(c.ClientIP(), "", 5)
+
+			// Return result
+			return_data = URLid{ID: ShortID, ShortURL: URL + ShortID}
+			c.JSON(200, return_data)
+		} else {
+			// Return result
+			return_data = URLid{ID: "", ShortURL: ""}
+			c.JSON(400, return_data)
+		}
 	} else {
 		// Return result
-		return_data = URLid{ID: "", ShortURL: ""}
-		c.JSON(400, return_data)
+		var return_result Result
+		return_result = Result{Status: false, Message: "Too many requests, please try again later."}
+		c.JSON(400, return_result)
 	}
 }
 
@@ -77,16 +96,23 @@ func RedirectURL(c *gin.Context) {
 		Check, Link := Database.QueryData(ID)
 		if Check {
 			// Add hit to Redis
-			cache.AddData(ID, Link)
+			cache.AddData(ID, Link, 30)
 			c.Redirect(301, Link)
 		} else {
 			// Add miss link to Redis (Not Found or Expire)
-			cache.AddData(ID, "MISS")
-			c.Status(404)
+			cache.AddData(ID, "MISS", 30)
+
+			// Return result
+			var return_result Result
+			return_result = Result{Status: false, Message: "Not Found."}
+			c.JSON(404, return_result)
 		}
 	} else {
 		if URL == "MISS" {
-			c.Status(404)
+			// Return result
+			var return_result Result
+			return_result = Result{Status: false, Message: "Not Found."}
+			c.JSON(404, return_result)
 		} else {
 			c.Redirect(301, URL)
 		}

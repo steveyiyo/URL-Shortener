@@ -23,10 +23,10 @@ func InitRedis() {
 }
 
 // Add data to Redis
-func AddData(key, value string) bool {
+func AddData(key string, value string, second time.Duration) bool {
 	ctx := context.Background()
 
-	err := Redis.Set(ctx, key, value, 30*time.Second).Err()
+	err := Redis.Set(ctx, key, value, second*time.Second).Err()
 	return Tools.ErrCheck(err)
 }
 
@@ -37,7 +37,7 @@ func QueryData(key string) (bool, string) {
 	var return_status bool
 	var return_value string
 
-	val2, err := Redis.Get(ctx, key).Result()
+	value, err := Redis.Get(ctx, key).Result()
 	Tools.ErrCheck(err)
 
 	if err == redis.Nil {
@@ -47,7 +47,7 @@ func QueryData(key string) (bool, string) {
 		log.Println(err)
 	} else {
 		return_status = true
-		return_value = val2
+		return_value = value
 	}
 	return return_status, return_value
 }
@@ -55,11 +55,14 @@ func QueryData(key string) (bool, string) {
 // It's a test function.
 func TestMain(t *testing.T) {
 	InitRedis()
-	AddData("hi", "pong")
+	AddData("hi", "pong", 5)
 	status, data := QueryData("hi")
 	if status {
 		fmt.Println(data)
 	} else {
 		fmt.Println("QaQ")
 	}
+	time.Sleep(6 * time.Second)
+	_, data = QueryData("hi")
+	fmt.Println(data)
 }
