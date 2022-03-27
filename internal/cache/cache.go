@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	Tools "github.com/steveyiyo/url-shortener/internal/tools"
+	"github.com/steveyiyo/url-shortener/internal/tools"
 )
 
 var Redis *redis.Client
@@ -25,7 +25,7 @@ func AddData(key string, value string, second time.Duration) bool {
 	ctx := context.Background()
 
 	err := Redis.Set(ctx, key, value, second*time.Second).Err()
-	return Tools.ErrCheck(err)
+	return tools.ErrCheck(err)
 }
 
 // Query data from Redis
@@ -36,12 +36,12 @@ func QueryData(key string) (bool, string) {
 	var return_value string
 
 	value, err := Redis.Get(ctx, key).Result()
-	Tools.ErrCheck(err)
+	tools.ErrCheck(err)
 
 	if err == redis.Nil {
 		return_status = false
 		return_value = ""
-	} else if !Tools.ErrCheck(err) {
+	} else if !tools.ErrCheck(err) {
 		log.Println(err)
 	} else {
 		return_status = true

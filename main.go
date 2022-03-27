@@ -8,8 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/steveyiyo/url-shortener/internal/cache"
-	Database "github.com/steveyiyo/url-shortener/internal/database"
-	Tools "github.com/steveyiyo/url-shortener/internal/tools"
+	"github.com/steveyiyo/url-shortener/internal/database"
+	"github.com/steveyiyo/url-shortener/internal/tools"
 )
 
 // Predefined variable and struct
@@ -48,7 +48,7 @@ func AddURL(c *gin.Context) {
 	var return_data URLid
 
 	// Check Time and Convert to Unix format
-	isTimestampOk, timestamp := Tools.ConvertTimetoUnix(data.ExpiredAt)
+	isTimestampOk, timestamp := tools.ConvertTimetoUnix(data.ExpiredAt)
 
 	// Check Limit IP
 	limit_check, _ := cache.QueryData(c.ClientIP())
@@ -56,13 +56,13 @@ func AddURL(c *gin.Context) {
 	// Check Limit
 	if !limit_check {
 		// Check Link and Time Valid
-		if Tools.CheckLinkValid(data.URL) && (isTimestampOk) {
+		if tools.CheckLinkValid(data.URL) && (isTimestampOk) {
 
 			// Random Short ID
-			ShortID := Tools.RandomString(5)
+			ShortID := tools.RandomString(5)
 
 			// Add data to DB
-			Database.AddData(ShortID, data.URL, timestamp)
+			database.AddData(ShortID, data.URL, timestamp)
 
 			// Add Limit IP to Redis
 			cache.AddData(c.ClientIP(), "", 5)
@@ -93,7 +93,7 @@ func RedirectURL(c *gin.Context) {
 	isExist, URL := cache.QueryData(ID)
 	if !isExist {
 		// Query Link in DB
-		Check, Link := Database.QueryData(ID)
+		Check, Link := database.QueryData(ID)
 		if Check {
 			// Add hit to Redis
 			cache.AddData(ID, Link, 30)
@@ -135,13 +135,13 @@ func main() {
 	URL = Host + ":" + Port + "/"
 
 	// Check Config
-	// Tools.CheckIPAddress(Listen)
+	// tools.CheckIPAddress(Listen)
 
 	// Init Redis
 	cache.InitRedis()
 
 	// Init Database
-	Database.CreateTable()
+	database.CreateTable()
 
 	// Init Web Server
 	gin.SetMode(gin.ReleaseMode)
