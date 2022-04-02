@@ -141,6 +141,7 @@ func main() {
 	cache.InitRedis()
 
 	// Init Database
+	database.Init()
 	database.CreateTable()
 
 	// Init Web Server

@@ -8,16 +8,19 @@ import (
 	"github.com/steveyiyo/url-shortener/internal/tools"
 )
 
+var db *sql.DB
+
+func Init() {
+	db, _ = sql.Open("sqlite3", "./data.db")
+}
+
 // Create file and table
 func CreateTable() {
 	// Create Table
-	db, err := sql.Open("sqlite3", "./data.db")
-	tools.ErrCheck(err)
 	stmt, err := db.Prepare("CREATE TABLE IF NOT EXISTS urlinfo (ShortID string, Link string, Expireat string);")
 	tools.ErrCheck(err)
 	stmt.Exec()
 	tools.ErrCheck(err)
-	db.Close()
 }
 
 // Add data to DB
@@ -29,13 +32,10 @@ func AddData(ShortID string, Link string, ExpireAt int64) {
 	res, err := stmt.Exec(ShortID, Link, ExpireAt)
 	tools.ErrCheck(err)
 	res.LastInsertId()
-	db.Close()
 }
 
 // Get data from DB
 func QueryData(ID string) (bool, string) {
-	db, err := sql.Open("sqlite3", "./data.db")
-	tools.ErrCheck(err)
 	now := time.Now().Unix()
 	rows, err := db.Query("SELECT * FROM urlinfo WHERE ShortID = ?", ID)
 	tools.ErrCheck(err)
