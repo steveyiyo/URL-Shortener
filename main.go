@@ -13,7 +13,8 @@ import (
 	"github.com/steveyiyo/url-shortener/package/tools"
 )
 
-func init() {
+func main() {
+
 	// Load .env
 	err := godotenv.Load()
 	if err != nil {
@@ -49,7 +50,4 @@ func init() {
 	} else {
 		log.Fatal("Error: Listen IP Address is not valid")
 	}
-}
-
-func main() {
 }
