@@ -6,16 +6,16 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/steveyiyo/url-shortener/internal/tools"
+	"github.com/steveyiyo/url-shortener/package/tools"
 )
 
 var Redis *redis.Client
 
 // Init Client
-func InitRedis() {
+func InitRedis(Redis_Addr, Redis_Pwd string) {
 	Redis = redis.NewClient(&redis.Options{
-		Addr:     "127.0.0.1:6379",
-		Password: "",
+		Addr:     Redis_Addr,
+		Password: Redis_Pwd,
 		DB:       0,
 	})
 }

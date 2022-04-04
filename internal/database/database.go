@@ -5,17 +5,18 @@ import (
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/steveyiyo/url-shortener/internal/tools"
+	"github.com/steveyiyo/url-shortener/package/tools"
 )
 
 var db *sql.DB
 
 func Init() {
 	db, _ = sql.Open("sqlite3", "./data.db")
+	createTable()
 }
 
 // Create file and table
-func CreateTable() {
+func createTable() {
 	// Create Table
 	stmt, err := db.Prepare("CREATE TABLE IF NOT EXISTS urlinfo (ShortID string, Link string, Expireat string);")
 	tools.ErrCheck(err)

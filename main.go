@@ -2,124 +2,24 @@ package main
 
 import (
 	"log"
+	"os"
 	"strconv"
 
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 	"github.com/steveyiyo/url-shortener/internal/cache"
 	"github.com/steveyiyo/url-shortener/internal/database"
-	"github.com/steveyiyo/url-shortener/internal/tools"
+	"github.com/steveyiyo/url-shortener/internal/webserver"
+	"github.com/steveyiyo/url-shortener/package/tools"
 )
 
-// Predefined variable and struct
-type Config struct {
-	Host string `yaml:"Host"`
-	Port string `yaml:"Port"`
-}
-
-type Result struct {
-	Status  bool
-	Message string
-}
-
-var Listen string
-var Host string
-var Port string
-var URL string
-
-type Data struct {
-	URL       string `json:"url"`
-	ExpiredAt string `json:"expireAt"`
-}
-
-type URLid struct {
-	ID       string `json:"id"`
-	ShortURL string `json:"shortUrl"`
-}
-
-// AddURL
-func AddURL(c *gin.Context) {
-	// Get JSON Data
-	var data Data
-	c.BindJSON(&data)
-
-	// Init return result
-	var return_data URLid
-
-	// Check Time and Convert to Unix format
-	isTimestampOk, timestamp := tools.ConvertTimetoUnix(data.ExpiredAt)
-
-	// Check Limit IP
-	limit_check, _ := cache.QueryData(c.ClientIP())
-
-	// Check Limit
-	if !limit_check {
-		// Check Link and Time Valid
-		if tools.CheckLinkValid(data.URL) && (isTimestampOk) {
-
-			// Random Short ID
-			ShortID := tools.RandomString(5)
-
-			// Add data to DB
-			database.AddData(ShortID, data.URL, timestamp)
-
-			// Add Limit IP to Redis
-			cache.AddData(c.ClientIP(), "", 5)
-
-			// Return result
-			return_data = URLid{ID: ShortID, ShortURL: URL + ShortID}
-			c.JSON(200, return_data)
-		} else {
-			// Return result
-			return_data = URLid{ID: "", ShortURL: ""}
-			c.JSON(400, return_data)
-		}
-	} else {
-		// Return result
-		var return_result Result
-		return_result = Result{Status: false, Message: "Too many requests, please try again later."}
-		c.JSON(400, return_result)
+func init() {
+	// Load .env
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
 	}
-}
 
-// RedirectURL
-func RedirectURL(c *gin.Context) {
-
-	// Get Short ID from URL
-	ID := c.Param("ShortID")
-
-	// Query Link in Redis
-	isExist, URL := cache.QueryData(ID)
-	if !isExist {
-		// Query Link in DB
-		Check, Link := database.QueryData(ID)
-		if Check {
-			// Add hit to Redis
-			cache.AddData(ID, Link, 30)
-			c.Redirect(301, Link)
-		} else {
-			// Add miss link to Redis (Not Found or Expire)
-			cache.AddData(ID, "MISS", 30)
-
-			// Return result
-			var return_result Result
-			return_result = Result{Status: false, Message: "Not Found."}
-			c.JSON(404, return_result)
-		}
-	} else {
-		if URL == "MISS" {
-			// Return result
-			var return_result Result
-			return_result = Result{Status: false, Message: "Not Found."}
-			c.JSON(404, return_result)
-		} else {
-			c.Redirect(301, URL)
-		}
-	}
-}
-
-func main() {
 	// Load Config
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
@@ -129,32 +29,27 @@ func main() {
 	}
 
 	// Define Config
-	Listen = viper.GetString("Listen")
-	Host = viper.GetString("Host")
-	Port = strconv.Itoa(viper.GetInt("Port"))
-	URL = Host + ":" + Port + "/"
+	Listen := viper.GetString("Listen")
+	Host := viper.GetString("Host")
+	Port := strconv.Itoa(viper.GetInt("Port"))
+	URL := Host + ":" + Port + "/"
+	Redis_Addr := os.Getenv("Redis_Addr")
+	Redis_Pwd := os.Getenv("Redis_Pwd")
 
 	// Check Config
-	// tools.CheckIPAddress(Listen)
+	if tools.CheckIPAddress(Listen) {
+		// Init Redis
+		cache.InitRedis(Redis_Addr, Redis_Pwd)
 
-	// Init Redis
-	cache.InitRedis()
+		// Init Database
+		database.Init()
 
-	// Init Database
-	database.Init()
-	database.CreateTable()
+		// Init Web Server
+		webserver.Init(Listen, Host, Port, URL)
+	} else {
+		log.Fatal("Error: Listen IP Address is not valid")
+	}
+}
 
-	// Init Web Server
-	gin.SetMode(gin.ReleaseMode)
-	route := gin.New()
-	route.Use(gin.Logger(), gin.Recovery())
-
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"*"}
-
-	route.Use(cors.New(config))
-	route.GET("/:ShortID", RedirectURL)
-	route.POST("/api/v1/urls", AddURL)
-
-	route.Run(Listen + ":" + Port)
+func main() {
 }
