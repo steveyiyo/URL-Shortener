@@ -10,11 +10,10 @@ import (
 	"github.com/steveyiyo/url-shortener/internal/cache"
 	"github.com/steveyiyo/url-shortener/internal/database"
 	"github.com/steveyiyo/url-shortener/internal/webserver"
-	"github.com/steveyiyo/url-shortener/package/tools"
+	"github.com/steveyiyo/url-shortener/pkg/tools"
 )
 
 func main() {
-
 	// Load .env
 	err := godotenv.Load()
 	if err != nil {

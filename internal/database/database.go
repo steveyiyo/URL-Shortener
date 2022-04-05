@@ -5,7 +5,7 @@ import (
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/steveyiyo/url-shortener/package/tools"
+	"github.com/steveyiyo/url-shortener/pkg/tools"
 )
 
 var db *sql.DB

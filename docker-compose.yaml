@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+    cache:
+      image: redis:latest
+      restart: always
+    app:
+      image: steveyiyo/url-shortener:latest
+      restart: always
+      ports:
+      - 0.0.0.0:7600:7600

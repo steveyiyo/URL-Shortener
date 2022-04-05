@@ -1,11 +1,14 @@
 package webserver
 
 import (
+	"fmt"
+	"log"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/steveyiyo/url-shortener/internal/cache"
 	"github.com/steveyiyo/url-shortener/internal/database"
-	"github.com/steveyiyo/url-shortener/package/tools"
+	"github.com/steveyiyo/url-shortener/pkg/tools"
 )
 
 // Predefined variable and struct
@@ -52,6 +55,8 @@ func Init(Init_Listen, Init_Host, Init_Port, Init_URL string) {
 	route.Use(cors.New(config))
 	route.GET("/:ShortID", RedirectURL)
 	route.POST("/api/v1/urls", AddURL)
+
+	log.Println(fmt.Sprintf("Server is running on %s:%s", Listen, Port))
 
 	route.Run(Listen + ":" + Port)
 }

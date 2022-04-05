@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/steveyiyo/url-shortener/package/tools"
+	"github.com/steveyiyo/url-shortener/pkg/tools"
 )
 
 var Redis *redis.Client
