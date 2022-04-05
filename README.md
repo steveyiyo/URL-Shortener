@@ -63,7 +63,7 @@ func CheckIPAddress(ip string) bool       // Check if IP Address valid
 
 ## Usage
 
-Download the [release version](https://github.com/steveyiyo/URL-Shortener/releases) from here.
+Download the release version from [here](https://github.com/steveyiyo/URL-Shortener/releases).
 
 Upload URL API:
 
@@ -97,12 +97,12 @@ curl -L -X GET http://localhost/<url_id> => REDIRECT to original URL # HTTP 301
 
 ## Run with the docker?
 
-- Download the docker image
+- Download the docker image  
 `docker pull steveyiyo/url-shortener:latest`
 
-- Run the docker image
+- Run the docker image  
 `sudo docker run -p 0.0.0.0:7600:7600 steveyiyo/url-shortener`
 
 ## TODO
 
-- [] docker-compose.yaml
+- [ ] docker-compose.yaml
