@@ -1,4 +1,5 @@
 .env
+data.db
 dist/
 .github/*
 build/*
