@@ -10,5 +10,5 @@ services:
       ports:
       - 0.0.0.0:7600:7600
       volumes:
-        - "/root/steveyiyo-url-shortener/config/.env:/app/.env"
-        - "/root/steveyiyo-url-shortener/config/config.yaml:/app/config.yaml"
+        - "/opt/url/.env:/app/.env"
+        - "/opt/url/config.yaml:/app/config.yaml"
