@@ -1,11 +1,12 @@
 module github.com/steveyiyo/url-shortener
 
-go 1.17
+go 1.18
 
 require (
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-redis/redis/v8 v8.11.5
+	github.com/joho/godotenv v1.4.0
 	github.com/mattn/go-sqlite3 v1.14.12
 	github.com/spf13/viper v1.10.1
 )
@@ -20,7 +21,6 @@ require (
 	github.com/go-playground/validator/v10 v10.10.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
