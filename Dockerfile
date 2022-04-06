@@ -10,7 +10,7 @@ RUN  CGO_ENABLED=1 CC=gcc go build -o /app/app main.go
 
 FROM alpine:3.10
 
-# Install libc6-compat for go-sqlite3 use
+# Install for go-sqlite3 use
 RUN apk --update upgrade \
     && apk add --no-cache sqlite \
     && rm -rf /var/cache/apk/*

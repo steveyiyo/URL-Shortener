@@ -10,5 +10,8 @@ services:
       ports:
       - 0.0.0.0:7600:7600
       volumes:
+        # Mount the config file
         - "/opt/url/.env:/app/.env"
         - "/opt/url/config.yaml:/app/config.yaml"
+        # Mount the database volume
+        - "/opt/url/data.db:/app/data.db"

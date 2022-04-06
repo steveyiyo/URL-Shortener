@@ -103,6 +103,6 @@ curl -L -X GET http://localhost/<url_id> => REDIRECT to original URL # HTTP 301
 - Run the docker image  
 `sudo docker run -p 0.0.0.0:7600:7600 steveyiyo/url-shortener`
 
-## TODO
+## docker-compose
 
-- [ ] docker-compose.yaml
+- `docker-compose up -d`
