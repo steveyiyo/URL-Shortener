@@ -1,6 +1,6 @@
 .env
-data.db
 dist/
 .github/*
 build/*
 build_test.sh
+data/*

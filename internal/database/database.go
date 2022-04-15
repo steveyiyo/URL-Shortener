@@ -11,7 +11,7 @@ import (
 var db *sql.DB
 
 func Init() {
-	db, _ = sql.Open("sqlite3", "./data.db")
+	db, _ = sql.Open("sqlite3", "./data/data.db")
 	createTable()
 }
 
@@ -26,8 +26,6 @@ func createTable() {
 
 // Add data to DB
 func AddData(ShortID string, Link string, ExpireAt int64) {
-	db, err := sql.Open("sqlite3", "./data.db")
-	tools.ErrCheck(err)
 	stmt, err := db.Prepare("INSERT INTO urlinfo(ShortID, Link, Expireat) values(?,?,?)")
 	tools.ErrCheck(err)
 	res, err := stmt.Exec(ShortID, Link, ExpireAt)

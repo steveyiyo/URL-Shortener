@@ -1,6 +1,6 @@
 FROM golang:1.18-alpine3.15 as builder
 
-RUN apk --update upgrade \
+RUN apk update \
     && apk add --no-cache sqlite gcc g++ \
     && rm -rf /var/cache/apk/*
 
@@ -11,7 +11,7 @@ RUN  CGO_ENABLED=1 CC=gcc go build -o /app/app main.go
 FROM alpine:3.10
 
 # Install for go-sqlite3 use
-RUN apk --update upgrade \
+RUN apk update \
     && apk add --no-cache sqlite \
     && rm -rf /var/cache/apk/*
 
