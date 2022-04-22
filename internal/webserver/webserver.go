@@ -1,7 +1,6 @@
 package webserver
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/gin-contrib/cors"
@@ -22,6 +21,8 @@ type Result struct {
 	Message string
 }
 
+// Pre define
+var return_result Result
 var Listen string
 var Host string
 var Port string
@@ -56,7 +57,7 @@ func Init(Init_Listen, Init_Host, Init_Port, Init_URL string) {
 	route.GET("/:ShortID", RedirectURL)
 	route.POST("/api/v1/urls", AddURL)
 
-	log.Println(fmt.Sprintf("Server is running on %s:%s", Listen, Port))
+	log.Printf("Server is running on %s:%s", Listen, Port)
 
 	route.Run(Listen + ":" + Port)
 }
@@ -100,7 +101,6 @@ func AddURL(c *gin.Context) {
 		}
 	} else {
 		// Return result
-		var return_result Result
 		return_result = Result{Status: false, Message: "Too many requests, please try again later."}
 		c.JSON(400, return_result)
 	}
@@ -126,14 +126,12 @@ func RedirectURL(c *gin.Context) {
 			cache.AddData(ID, "MISS", 30)
 
 			// Return result
-			var return_result Result
 			return_result = Result{Status: false, Message: "Not Found."}
 			c.JSON(404, return_result)
 		}
 	} else {
 		if URL == "MISS" {
 			// Return result
-			var return_result Result
 			return_result = Result{Status: false, Message: "Not Found."}
 			c.JSON(404, return_result)
 		} else {
